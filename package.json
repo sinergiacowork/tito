@@ -26,7 +26,8 @@
     "hubot-slack": "~2.2.0",
     "soupselect": "~0.2.0",
     "htmlparser": "~1.7.7",
-    "cleverbot-node": "~0.1.8"
+    "cleverbot-node": "~0.1.8",
+    "underscore": "~1.7.0"
   },
   "engines": {
     "node": ">= 0.8.x",
