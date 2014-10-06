@@ -20,7 +20,7 @@ module.exports = (robot) ->
     searchRegex = new RegExp(key, 'i')
     Object.keys(memories()).filter (key) -> searchRegex.test(key)
 
-  robot.respond /(?:(que|cual) es|acordate( de que)?)\s+(.*)/i, (msg) ->
+  robot.respond /(?:(que|cual) es|acordate( de que)?)\s+(.*)(\?)?/i, (msg) ->
     words = msg.match[3]
     if match = words.match /(.*?)(\s+es\s+([\s\S]*))$/i
       msg.finish()
