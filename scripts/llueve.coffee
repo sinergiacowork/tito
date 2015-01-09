@@ -1,5 +1,16 @@
+# Description:
+#   Llueve en sinergia?
+#
+# Commands:
+#   tito: llueve?
+#   tito: esta lloviendo?
+#   tito: it rains?
+#
+# Author:
+#   elcuervo
+
 module.exports = (robot) ->
-  robot.respond /(llueve)(\?)?/i, (msg) ->
+  robot.respond /(esta lloviendo|llueve|(it )?rains)(\?)?/i, (msg) ->
     msg.http('https://mazu-sinergia.herokuapp.com/')
       .get() (err, res, body) ->
         info = JSON.parse(body)
