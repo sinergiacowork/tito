@@ -1,0 +1,7 @@
+deploy:
+  provider: heroku
+  api_key:
+    secure: XV5PA6gv+zxXqHNF7w1g07V/onCOMHbsMIoxoT2YYppuHixDqNIKzhFXPFbYOysycuTlLRj4chzPI6Xd2G/UTbG18GTrYO39aTJwJ8+HXXgiclxUvmg3e7bvERaJ13ps1eK8uXJRrwjk4t/3Lww0M7Z3DWe8L2p1PdAerm1o1ws=
+  app: tito-sinergia
+  on:
+    repo: sinergiacowork/tito
