@@ -3,7 +3,7 @@
 #
 # Commands:
 #   hubot que es|acordate <key> - Returns a string
-#   hubot acordate <key> ss <value>. - Returns nothing. Remembers the text for next time!
+#   hubot acordate <key> es <value>. - Returns nothing. Remembers the text for next time!
 #   hubot de que te acordas - Returns everything hubot remembers.
 #   hubot olvidate <key> - Removes key from hubots brain.
 #
