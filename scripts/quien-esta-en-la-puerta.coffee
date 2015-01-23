@@ -6,4 +6,4 @@
 
 module.exports = (robot) ->
   robot.respond /(quien esta en la puerta)(\?)?/i, (msg) ->
-    msg.send "http://gatekeeper-sinergia.herokuapp.com/door.jpg"
+    msg.send "http://gatekeeper-sinergia.herokuapp.com/door.jpg?" + new Date().getTime();
