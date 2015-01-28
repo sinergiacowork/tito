@@ -20,12 +20,12 @@ module.exports = (robot) ->
     searchRegex = new RegExp(key, 'i')
     Object.keys(memories()).filter (key) -> searchRegex.test(key)
 
-  robot.respond /(?:(que|cual) es|acordate( de que)?)\s+(.*)(\\?)?/i, (msg) ->
-    words = msg.match[3]
-    if match = words.match /(.*?)(\s+es\s+([\s\S]*))$/i
+  robot.respond /(?:(que|cual) (es|son)|acordate( de que)?)\s+(.*)(\\?)?/i, (msg) ->
+    words = msg.match[4]
+    if match = words.match /(.*?)(\s+(es|son)\s+([\s\S]*))$/i
       msg.finish()
       key = match[1].toLowerCase()
-      value = match[3]
+      value = match[4]
       currently = memories()[key]
       if currently
         msg.send "#{key} es #{currently}. Olvidate de #{key} primero."
