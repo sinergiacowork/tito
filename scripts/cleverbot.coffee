@@ -15,9 +15,15 @@
 
 cleverbot = require('cleverbot-node')
 
+random = () ->
+  return Math.floor(Math.random() * 100)
+
 module.exports = (robot) ->
   c = new cleverbot()
 
-  robot.hear /^tito(:)?(.*)/i, (msg) ->
-    data = msg.match[2].trim()
-    c.write(data, (c) => msg.send(c.message))
+  robot.hear /^(@)?tito(:)?(.*)/i, (msg) ->
+    if random() == 42
+      msg.send "Como tu ex"
+    else
+      data = msg.match[3].trim()
+      c.write(data, (c) => msg.send(c.message))
