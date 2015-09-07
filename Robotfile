@@ -1,0 +1,5 @@
+NAME    Tito
+BOT     hubot
+STORAGE redis
+
+ADAPTER slack tito
