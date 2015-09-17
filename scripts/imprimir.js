@@ -74,38 +74,37 @@ var checkStatus = function(toPrint) {
 
 return module.exports = function(robot) {
   robot.hear(/.*/i, function(res) {
-  var userName = res.message.user.name;
-  var room = res.message.user.room;
-  var isUpload = res.message.rawMessage.upload;
+    var userName = res.message.user.name;
+    var room = res.message.user.room;
+    var isUpload = res.message.rawMessage.upload;
 
-// one to one conversation and you are sharing me a file.
-if(userName === room && isUpload) {
-  var file = res.message.rawMessage.file;
-  var user = res.message.user.id;
-  var filename = file.name;
-  var fileUrl = file.url_download;
-  var hasComment = file.comments_count > 0;
-  var printer = !hasComment ? 'negro' : file.initial_comment.comment;
+    // one to one conversation and you are sharing me a file.
+    if(userName === room && isUpload) {
+      var file = res.message.rawMessage.file;
+      var user = res.message.user.id;
+      var filename = file.name;
+      var fileUrl = file.url_download;
+      var hasComment = file.comments_count > 0;
+      var printer = !hasComment ? 'negro' : file.initial_comment.comment;
 
-  res.send("Voy a imprimir `" + filename + "` en `" + printer + "`");
+      res.send("Voy a imprimir `" + filename + "` en `" + printer + "`");
 
-  toPrint = {
-    response: res,
-    print: {
-      path: null,
-      id: null,
-      printer: printers[printer],
-      cost: cost[printer]
-    },
-    file: {
-      url: fileUrl,
-      name: filename,
-      owner: user
+      toPrint = {
+        response: res,
+        print: {
+          path: null,
+          id: null,
+          printer: printers[printer],
+          cost: cost[printer]
+        },
+        file: {
+          url: fileUrl,
+          name: filename,
+          owner: user
+        }
+      }
+
+      download(toPrint).then(print).then(checkStatus);
     }
-  }
-
-  download(toPrint).then(print).then(checkStatus);
-}
-
   });
 }
