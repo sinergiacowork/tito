@@ -20,6 +20,7 @@
     "hubot-scripts": "^2.16.2",
     "hubot-shipit": "^0.2.0",
     "hubot-slack": "^3.3.0",
+    "hubot-telegram": "0.0.7",
     "q": "^1.4.1",
     "request": "^2.61.0",
     "soupselect": "^0.2.0",

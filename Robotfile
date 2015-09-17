@@ -3,3 +3,4 @@ BOT     hubot
 STORAGE redis
 
 ADAPTER slack !
+ADAPTER telegram eltitobot
