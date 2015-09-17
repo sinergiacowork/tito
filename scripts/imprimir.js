@@ -74,6 +74,9 @@ var checkStatus = function(toPrint) {
 
 return module.exports = function(robot) {
   robot.hear(/.*/i, function(res) {
+    var slack = process.env.HUBOT_ADAPTER == "slack";
+    if(!slack) return;
+
     var userName = res.message.user.name;
     var room = res.message.user.room;
     var isUpload = res.message.rawMessage.upload;
