@@ -91,6 +91,10 @@ return module.exports = function(robot) {
       var printer = !hasComment ? 'negro' : file.initial_comment.comment;
 
       res.send("Voy a imprimir `" + filename + "` en `" + printer + "`");
+      gatekeeper = robot.brain.userForName("host")
+      message = "@" + res.message.user.name + " mando a imprimir " + fileUrl  + " en " + printer;
+
+      robot.send({ room: gatekeeper.name }, message)
 
       toPrint = {
         response: res,
@@ -100,6 +104,7 @@ return module.exports = function(robot) {
           printer: printers[printer],
           cost: cost[printer]
         },
+
         file: {
           url: fileUrl,
           name: filename,
@@ -107,7 +112,7 @@ return module.exports = function(robot) {
         }
       }
 
-      download(toPrint).then(print).then(checkStatus);
+      download(toPrint).then(print);
     }
   });
 }
