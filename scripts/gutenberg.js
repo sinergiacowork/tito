@@ -239,13 +239,14 @@ return module.exports = function(robot) {
         job.enqueued.then(function() {
           console.log("enqueued");
 
+          user.notify(
+            "Voy a imprimir (`" + options.copies + "x`) en " + printer.id + " :fax:"
+          );
+
           host.notify(
             "@" + user.name + " mando a imprimir `" + options.copies + "` copias en impresora `" + printer.name + "`."
           );
 
-          user.notify(
-            "Voy a imprimir (`" + options.copies + "x`) en " + printer.id + " :fax:"
-          );
         });
 
         job.completed.then(function() {
