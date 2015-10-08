@@ -72,6 +72,7 @@ var Job = function(user, url, options) {
 
 Job.prototype = {
   update: function(information) {
+
     this.state = information['job-state'];
     this.pages = information['job-media-sheets-completed'];
     this.finished = this.state == "completed" ||
@@ -217,6 +218,19 @@ return module.exports = function(robot) {
         return;
       }
 
+      var Host = function(userName, robot) {
+        this.name = userName;
+        this.robot = robot;
+      }
+
+      Host.prototype = {
+        notify: function(msg) {
+          this.robot.send({ room: this.name }, msg);
+        }
+      };
+
+      var hostName = process.env.HOST_USER || "host";
+      var host = new Host(hostName, robot);
       var user = new User(slackUser, robot);
       var printer = new Printer(options.printer);
       var job = new Job(user, fileUrl, options);
@@ -225,6 +239,10 @@ return module.exports = function(robot) {
         job.enqueued.then(function() {
           console.log("enqueued");
 
+          host.notify(
+            "@" + user.name + " mando a imprimir `" + options.copies + "` copias en impresora `" + printer.name + "`."
+          );
+
           user.notify(
             "Voy a imprimir (`" + options.copies + "x`) en " + printer.id + " :fax:"
           );
@@ -232,12 +250,18 @@ return module.exports = function(robot) {
 
         job.completed.then(function() {
           console.log("completed");
+          var message = "Tu impresion esta lista :clap:.\n";
 
-          user.notify(
-            "Tu impresion esta lista :clap:. Cantidad de paginas: `" + job.pages + "`. \n" +
-            "El precio total es: `$" + (job.pages * printer.pricePerPage) + "`. \n" +
-            "Por favor paga en la latita al lado de las impresoras :money_with_wings:."
-          )
+          if(job.pages > 0) {
+            message = message + "Cantidad de paginas: `" + job.pages + "`. \n" +
+                      "El precio total es: `$" + (job.pages * printer.pricePerPage) + "`. \n";
+          } else {
+            message = "El precio por pagina es de `$" + printer.pricePerPage + "`\n";
+          }
+
+          message = message + "Por favor paga en la latita al lado de las impresoras :money_with_wings:.";
+
+          user.notify(message);
         });
       });
 
