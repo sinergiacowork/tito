@@ -8,12 +8,18 @@ var fs = require('fs');
 var path = require('path');
 var mime = require('mime');
 
-var printCenter = process.env.CUPS_SERVER;
-
-var User = function(id, name) {
-  this.id = id;
-  this.name = name;
+var User = function(slackUser, proxy) {
+  this.id = slackUser.id;
+  this.name = slackUser.name;
+  this.room = slackUser.room;
+  this.proxy = proxy;
 };
+
+User.prototype = {
+  notify: function(msg) {
+    this.proxy.send({ room: this.room }, msg);
+  }
+}
 
 var Job = function(user, url, options) {
   var self = this;
@@ -67,7 +73,7 @@ var Job = function(user, url, options) {
 Job.prototype = {
   update: function(information) {
     this.state = information['job-state'];
-    this.pages = information['number-of-documents'];
+    this.pages = information['job-media-sheets-completed'];
     this.finished = this.state == "completed" ||
                     this.state == "aborted" ||
                     this.state == "cancelled";
@@ -85,9 +91,18 @@ Job.prototype = {
 };
 
 var Printer = function(name) {
-  var uri = "http://" + printCenter + "/printers/" + name;
+  var ids = { "color": "Sinergia_Color", "negro": "Sinergia_Blanco_y_Negro"}
+  var printCenter = process.env.CUPS_SERVER;
+
+  var uri = "http://" + printCenter + "/printers/" + ids[name];
   var sent = Q.defer();
   var self = this;
+
+  var prices = { "color": 12, "negro": 2 }
+
+  this.name = ids[name];
+  this.id = name;
+  this.pricePerPage = prices[this.id];
 
   this.sent = sent.promise;
   this._printer = ipp.Printer(uri);
@@ -193,25 +208,36 @@ return module.exports = function(robot) {
       }
 
       var fileUrl = file.url_download;
-      var user = new User(slackUser.id, userName);
-      var printer = new Printer("Sinergia_Blanco_y_Negro");
-      var job = new Job(user, fileUrl, options);
+      var ext = path.extname(fileUrl);
 
-      res.send("kuak");
+      if(ext == ".doc" || ext == ".docx") {
+        var msg = "Perdon pero no se imprimir `" + ext + "` :pensive:. Si lo convertis en PDF no voy a tener problemas." ;
+        robot.send({ room: room }, msg);
+
+        return;
+      }
+
+      var user = new User(slackUser, robot);
+      var printer = new Printer(options.printer);
+      var job = new Job(user, fileUrl, options);
 
       printer.print(job).then(function(res) {
         job.enqueued.then(function() {
-          var msg = "Voy a imprimir (" + options.copies + "x)";
           console.log("enqueued");
-          robot.send({ room: room }, msg);
-          //user.notify("enqueued", job);
+
+          user.notify(
+            "Voy a imprimir (`" + options.copies + "x`) en " + printer.id + " :fax:"
+          );
         });
 
         job.completed.then(function() {
-          var msg = "Tu impresion esta lista. Fueron " + job.pages + " paginas";
-          robot.send({ room: room }, msg);
           console.log("completed");
-          //user.notify("completed", job);
+
+          user.notify(
+            "Tu impresion esta lista :clap:. Cantidad de paginas: `" + job.pages + "`. \n" +
+            "El precio total es: `$" + (job.pages * printer.pricePerPage) + "`. \n" +
+            "Por favor paga en la latita al lado de las impresoras :money_with_wings:."
+          )
         });
       });
 
